@@ -1,6 +1,6 @@
 {
   "name": "@getpinaka/sdk",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Pinaka SDK — automatic error capture and RCA context for Node.js applications",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -12,7 +12,9 @@
       "require": "./dist/index.js"
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --dts --clean",
     "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
@@ -37,11 +39,23 @@
     "koa": ">=2.0.0"
   },
   "peerDependenciesMeta": {
-    "express": { "optional": true },
-    "fastify": { "optional": true },
-    "koa": { "optional": true }
+    "express": {
+      "optional": true
+    },
+    "fastify": {
+      "optional": true
+    },
+    "koa": {
+      "optional": true
+    }
   },
-  "keywords": ["pinaka", "rca", "error-tracking", "debugging", "apm"],
+  "keywords": [
+    "pinaka",
+    "rca",
+    "error-tracking",
+    "debugging",
+    "apm"
+  ],
   "license": "MIT",
   "engines": {
     "node": ">=18.0.0"
