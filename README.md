@@ -1,4 +1,4 @@
-# @pinaka/sdk
+# @getpinaka/sdk
 
 Automatic error capture for Node.js applications.  
 Sends runtime context to Pinaka for AI-powered root cause analysis.
@@ -6,13 +6,13 @@ Sends runtime context to Pinaka for AI-powered root cause analysis.
 ## Install
 
 ```bash
-npm install @pinaka/sdk
+npm install @getpinaka/sdk
 ```
 
 ## Quickstart
 
 ```typescript
-import Pinaka from '@pinaka/sdk'
+import Pinaka from '@getpinaka/sdk'
 
 Pinaka.init({
   apiKey: 'pk_live_xxx',       // from getpinaka.com dashboard

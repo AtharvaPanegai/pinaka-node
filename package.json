@@ -1,5 +1,5 @@
 {
-  "name": "@pinaka/sdk",
+  "name": "@getpinaka/sdk",
   "version": "0.1.0",
   "description": "Pinaka SDK — automatic error capture and RCA context for Node.js applications",
   "main": "dist/index.js",
