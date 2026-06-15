@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+examples/express-example/node_modules/
+examples/fastify-example/node_modules/
+examples/*
+
+# Build output
+dist/
+*.tsbuildinfo
+
+# Test coverage
+coverage/
+
+# Environment
+.env
+.env.local
+examples/**/.env
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
