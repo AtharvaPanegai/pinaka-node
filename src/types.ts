@@ -1,6 +1,7 @@
 export interface PinakaConfig {
   apiKey: string
   service: string
+  repoId?: string   // from the Repositories page in your Garuda dashboard; takes precedence over service-name matching
   environment?: string
   release?: string
   maxLogLines?: number
@@ -49,6 +50,7 @@ export interface ContextPayload {
 export interface PinakaPayload {
   apiKey: string
   service: string
+  repoId?: string
   environment: string
   language: 'node'
   sdkVersion: string
