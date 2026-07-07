@@ -1,0 +1,95 @@
+name: Auto-merge eligible PRs
+
+on:
+  schedule:
+    - cron: '0 2 * * *'   # 2 AM UTC daily
+  workflow_dispatch:        # allow manual trigger from the Actions tab
+
+jobs:
+  auto-merge:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: write
+
+    steps:
+      - name: Check and merge eligible PRs
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { data: prs } = await github.rest.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+            });
+
+            if (prs.length === 0) {
+              console.log('No open PRs.');
+              return;
+            }
+
+            for (const pr of prs) {
+              console.log(`\nChecking PR #${pr.number}: "${pr.title}"`);
+
+              // Fetch full details — mergeable is only populated on the single-PR endpoint
+              const { data: detail } = await github.rest.pulls.get({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: pr.number,
+              });
+
+              if (detail.draft) {
+                console.log('  → draft, skipping');
+                continue;
+              }
+
+              if (detail.mergeable === false) {
+                console.log('  → merge conflicts, skipping');
+                continue;
+              }
+
+              // 'blocked' means required reviews or status checks are not satisfied
+              if (detail.mergeable_state === 'blocked') {
+                console.log('  → blocked by branch protection (reviews or checks), skipping');
+                continue;
+              }
+
+              // Check all CI runs on the head commit
+              const { data: checksData } = await github.rest.checks.listForRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: detail.head.sha,
+              });
+
+              const runs = checksData.check_runs;
+              const pending = runs.filter(r => r.status !== 'completed');
+              const failed  = runs.filter(r =>
+                r.status === 'completed' &&
+                !['success', 'skipped', 'neutral'].includes(r.conclusion ?? '')
+              );
+
+              if (pending.length > 0) {
+                console.log(`  → ${pending.length} check(s) still running, skipping`);
+                continue;
+              }
+
+              if (failed.length > 0) {
+                console.log(`  → failing checks: ${failed.map(r => r.name).join(', ')}, skipping`);
+                continue;
+              }
+
+              // Everything green — merge
+              try {
+                await github.rest.pulls.merge({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  pull_number: pr.number,
+                  merge_method: 'squash',
+                  commit_title: `${pr.title} (#${pr.number})`,
+                });
+                console.log('  → merged ✓');
+              } catch (err) {
+                console.log(`  → merge failed: ${err.message}`);
+              }
+            }
