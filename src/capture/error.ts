@@ -18,6 +18,7 @@ export function captureError(error: unknown, options: ErrorOptions = {}): void {
     const payload: PinakaPayload = {
       apiKey: config.apiKey,
       service: config.service,
+      ...(config.repoId ? { repoId: config.repoId } : {}),
       environment: config.environment,
       language: 'node',
       sdkVersion: SDK_VERSION,
